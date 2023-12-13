@@ -3,6 +3,7 @@ let percy;
 let percyWidth = 120;
 let percyHeight = 320;
 let standLoad, walkingLoad, attackLoad;
+let speed = 5;
 
 //enemy variables
 let wolf;
@@ -47,17 +48,19 @@ function preload(){
       'medp370_final_assets/wolf_sprites/wolf_walk6.png',
     
     );
-startScreen = loadImage('medp370final_startscreen.png')
+  startScreen = loadImage('medp370final_startscreen.png')
+  bg = loadImage('medp370finalgame_background.png')
 
 } // preload end
 
 // main loop variables
 let run = false;
+let win;
 
 function setup() {
-  new Canvas(windowWidth, windowHeight);
+  win = new Canvas(windowWidth, windowHeight);
  
-  percy = new Sprite(500, 275, percyWidth, percyHeight);
+  percy = new Sprite(windowWidth/2, windowHeight-percyHeight, percyWidth, percyHeight);
   percy.scale= 0.5;
   percy.rotationLock = true;
 
@@ -67,8 +70,8 @@ function setup() {
 
   wolf = new Sprite(800, 275, 14, 30, 'static');
   wolf.scale = 2;
-  wolf.addAni('attack', wolfAttackLoad);
-  wolf.addAni('walk', wolfWalkLoad);
+  wolf.addAni('wolfattack', wolfAttackLoad);
+  wolf.addAni('wolfwalk', wolfWalkLoad);
 
   percy.changeAni('idle');
   percy.visible = false;
@@ -77,19 +80,25 @@ function setup() {
 
 
 function draw() {
-  percy.debug = true;
-  
+ 
+  camera.on();
+  percy.debug = false;
   wolf.debug = true;
-  image(startScreen, 0, 0, windowWidth, windowHeight);
+  percy.pixelPerfect = true;
+  
+  image(startScreen, 0, 0, win.width, win.height);
   if(kb.presses('enter')){
     run = true;
-  }
-  if(run){
     percy.visible = true;
     wolf.visible = true;
-    background(220);
-    movement(percy);
   }
 
+
+  if(run){
+    image(bg, 0,-bg.height+canvas.height);
+    movement(percy,speed, win);
+  }
+  console.log(percy.x, percy.y);
+  
 }  
 
