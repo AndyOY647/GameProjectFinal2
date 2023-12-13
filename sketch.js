@@ -1,10 +1,15 @@
 //player variables
 let percy;
+let percyWidth = 120;
+let percyHeight = 320;
 let standLoad, walkingLoad, attackLoad;
 
 //enemy variables
 let wolf;
 let wolfAttackLoad, wolfWalkLoad;
+
+//screen and background
+let startScreen, bg;
 
 function preload(){
   standLoad = loadAni(
@@ -18,10 +23,10 @@ function preload(){
 
   attackLoad = loadAni(
     'medp370_final_assets/percy_swing1.png',
-    'medp370_final_assets/percy_swing1.png',
-    'medp370_final_assets/percy_swing1.png',
-    'medp370_final_assets/percy_swing1.png',
-    'medp370_final_assets/percy_swing1.png'
+    'medp370_final_assets/percy_swing2.png',
+    'medp370_final_assets/percy_swing3.png',
+    'medp370_final_assets/percy_swing4.png',
+    'medp370_final_assets/percy_swing5.png'
    );
   
   wolfAttackLoad = loadAni(
@@ -42,14 +47,17 @@ function preload(){
       'medp370_final_assets/wolf_sprites/wolf_walk6.png',
     
     );
+startScreen = loadImage('medp370final_startscreen.png')
 
 } // preload end
 
+// main loop variables
+let run = false;
+
 function setup() {
-  new Canvas(1200, 600);
+  new Canvas(windowWidth, windowHeight);
  
-  
-  percy = new Sprite(500, 275, 120, 320);
+  percy = new Sprite(500, 275, percyWidth, percyHeight);
   percy.scale= 0.5;
   percy.rotationLock = true;
 
@@ -60,38 +68,28 @@ function setup() {
   wolf = new Sprite(800, 275, 14, 30, 'static');
   wolf.scale = 2;
   wolf.addAni('attack', wolfAttackLoad);
-  wolf.addAni('walk', wolfWalkLoad)
+  wolf.addAni('walk', wolfWalkLoad);
 
+  percy.changeAni('idle');
+  percy.visible = false;
+  wolf.visible = false;
 }
 
+
 function draw() {
-  //background(220);
-  clear();
   percy.debug = true;
   
   wolf.debug = true;
-  
-
-  if (kb.pressing('left')) {
-		percy.changeAni('walk');
-		percy.vel.x = -2;
-	} else if (kb.pressing('right')) {
-		percy.changeAni('walk');
-		percy.vel.x = 2;
-  } else if (kb.pressing('up')) {
-    percy.changeAni('walk');
-		percy.vel.y = -2;
-  } else if (kb.pressing('down')) {
-    percy.changeAni('walk');
-		percy.vel.y = 2;
-	} else {
-		percy.changeAni('idle');
-		percy.vel.x = 0;
-    percy.vel.y = 0;
-	}
-
-  if(percy.collided(wolf)){
-    wolf.collider = 'dynamic';
+  image(startScreen, 0, 0, windowWidth, windowHeight);
+  if(kb.presses('enter')){
+    run = true;
+  }
+  if(run){
+    percy.visible = true;
+    wolf.visible = true;
+    background(220);
+    movement(percy);
   }
 
-}
+}  
+
