@@ -48,8 +48,10 @@ function preload(){
       'medp370_final_assets/wolf_sprites/wolf_walk6.png',
     
     );
-  startScreen = loadImage('medp370final_startscreen.png')
-  bg = loadImage('medp370finalgame_background.png')
+
+  startScreen = loadImage('medp370final_startscreen.png');
+  bg = loadImage('medp370finalgame_background.png');
+  health = loadImage('medp370_final_assets/health_heart.png');
 
 } // preload end
 
@@ -59,11 +61,11 @@ let win;
 
 function setup() {
   win = new Canvas(windowWidth, windowHeight);
- 
-  percy = new Sprite(windowWidth/2, windowHeight-percyHeight, percyWidth, percyHeight);
+  percy = new Sprite(windowWidth/2, -5000, percyWidth, percyHeight);
+  // s
   percy.scale= 0.5;
   percy.rotationLock = true;
-
+ 
   percy.addAni('idle', standLoad);
   percy.addAni('walk', walkingLoad);
   percy.addAni('attack', attackLoad);
@@ -82,7 +84,7 @@ function setup() {
 function draw() {
  
   camera.on();
-  percy.debug = false;
+  percy.debug = true;
   wolf.debug = true;
   percy.pixelPerfect = true;
   
