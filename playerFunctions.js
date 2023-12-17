@@ -73,25 +73,31 @@ function movement(player,speed, window){
 }
 
 function checkInteract(player, chest, potion){ // add creep and boss to the attribute for interactivity later
-  if(player.overlapping(chest)){
-    if(chest.image == chestClosed){
-      fill(255);
-      textSize(25);
-      let chestText = 'press ' + "'z' " + 'to open chest';
-      text(chestText, chest.x-20, chest.y-100);
-      if(kb.presses('z')){
-        chest.image = chestOpen;
-        potion.visible  = true;
-        for(let i = 0; i < 30; i+=5){
-          potion.y -=i;
-          setTimeout(disappear, 300);
-      }
+  for(let i = 0; i < chest.length; i++){
+    if(player.overlapping(chestRadius[i])){
+      if(chest[i].image == chestClosed){
+        fill(255);
+        textSize(25);
+        let chestText = 'press ' + "'z' " + 'to open chest';
+        text(chestText, chest[i].x-50, chest[i].y+150);
+        if(kb.presses('z')){
+          chest[i].image = chestOpen;
+          potion[i].visible  = true;
+          for(let j = 0; j < 30; j+=5){
+            potion[i].y -=j;
+            setTimeout(disappear, 300);
+        }
+        }
       }
     }
   }
+  
 }
 
 function disappear(){
- potion.remove();
+  for(let i = 0; i < potion.length; i++){
+    potion[i].visible = false;
+  }
+ 
 }
 
