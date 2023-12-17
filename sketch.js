@@ -5,10 +5,17 @@ let percyHeight = 320;
 let standLoad, walkingLoad, attackLoad;
 let speed = 10;
 let health = [];
+let attack = false;
 
 //enemy variables
 let wolf;
 let wolfAttackLoad, wolfWalkLoad;
+
+let goblin;
+let goblinWalkLoad, goblinAttackLoad;
+
+let boss;
+let bossWalkLoad;
 
 //screen and background
 let startScreen, bg;
@@ -18,6 +25,7 @@ let chestRadius = [];
 let potion = [];
 
 function preload(){
+  //playerAnimation
   standLoad = loadAni(
     'medp370_final_assets/percy_idle.png'
     );
@@ -51,9 +59,27 @@ function preload(){
       'medp370_final_assets/wolf_sprites/wolf_walk4.png',
       'medp370_final_assets/wolf_sprites/wolf_walk5.png',
       'medp370_final_assets/wolf_sprites/wolf_walk6.png',
-    
     );
+    
+    goblinWalkLoad = loadAni(
+      'medp370_final_assets/goblin_sprites/goblin_walk1.png',
+      'medp370_final_assets/goblin_sprites/goblin_walk2.png',
+      'medp370_final_assets/goblin_sprites/goblin_walk3.png',
+      'medp370_final_assets/goblin_sprites/goblin_walk4.png',
+      'medp370_final_assets/goblin_sprites/goblin_walk5.png',
+      'medp370_final_assets/goblin_sprites/goblin_walk6.png',
+    )
 
+    goblinAttackLoad = loadAni(
+      'medp370_final_assets/goblin_sprites/goblin_attack1.png',
+      'medp370_final_assets/goblin_sprites/goblin_attack2.png',
+      'medp370_final_assets/goblin_sprites/goblin_attack3.png',
+      'medp370_final_assets/goblin_sprites/goblin_attack4.png',
+      'medp370_final_assets/goblin_sprites/goblin_attack5.png',
+      'medp370_final_assets/goblin_sprites/goblin_attack6.png'
+    )
+
+// single image
   startScreen = loadImage('medp370final_startscreen.png');
   bg = loadImage('medp370finalgame_background.png');
   bgTop = loadImage('medp370_final_assets/top.png');
@@ -72,17 +98,14 @@ function preload(){
 // main loop variables
 let run = false;
 let win;
-
+let counter = 0;
 function setup() {
   //Before main loop
   win = new Canvas(windowWidth, windowHeight);
  
   wallL = new Sprite(leftWall.width/2, -leftWall.height/2.55, leftWall.width, leftWall.height, 'static');
-  wallL.image = leftWall;
   wallR = new Sprite( windowWidth - rightWall.width/2, -rightWall.height/2.55, rightWall.width, rightWall.height, 'static');
-  wallR.image = rightWall;
   wallT = new Sprite(windowWidth/2, -6880, bgTop.width, bgTop.height, 'static');
-  wallT.image = bgTop;
   wallB = new Sprite(windowWidth/2,windowHeight-300, windowWidth, 20, 'static');
 
   for(let i = 0; i <  3; i++){
@@ -117,10 +140,12 @@ function setup() {
 
  
   //player
-  percy = new Sprite(windowWidth/2, -5000, percyWidth, percyHeight);
+  percy = new Sprite(windowWidth/2, 500, percyWidth, percyHeight, 'dynamic');
   percy.scale= 0.5;
   percy.rotationLock = true;
- 
+  percy.maxHealth = 3;
+  percy.currentHealth = percy.maxHealth;
+
   percy.addAni('idle', standLoad);
   percy.addAni('walk', walkingLoad);
   percy.addAni('attack', attackLoad);
@@ -129,14 +154,26 @@ function setup() {
   percy.visible = false;
 
   //enemy
-  wolf = new Sprite(800, 275, 14, 30, 'static');
-  wolf.scale = 2;
+  wolf = new Sprite(800, 275, 16, 30, 'static');
+  wolf.scale = 4;
   wolf.addAni('wolfattack', wolfAttackLoad);
   wolf.addAni('wolfwalk', wolfWalkLoad);
   wolf.visible = false;
+  wolf.maxHealth = 1;
+  wolf.currentHealth = wolf.maxHealth;
 
+  goblin = new Sprite(900, -500, 20, 26);
+  goblin.scale = 4;
+  goblin.addAni('goblinWalk', goblinWalkLoad);
+  goblin.addAni('goblinAttack', goblinAttackLoad);
+  goblin.visible = false;
+  goblin.rotationLock = true;
+  goblin.bounciness = 0;
+  goblin.friction = 20;
+  goblin.maxHealth = 1;
+  goblin.currentHealth = goblin.maxHealth
   //health
-  for(let i = 0; i <  3; i++){
+  for(let i = 0; i <  percy.maxHealth; i++){
     health[i].visible = false;
   }
 
@@ -154,11 +191,11 @@ function draw() {
  
   camera.on();
   
-  // percy.debug = true;
-  // wolf.debug = true;
-  // percy.pixelPerfect = true;
-  // wallL.debug = true;
-  // wallR.debug = true;
+  percy.debug = true;
+  wolf.debug = true;
+  goblin.debug = true;
+  percy.pixelPerfect = true;
+ 
   // wallT.debug = false;
   // chest.debug = true;
   // chestRadius.debug = false;
@@ -169,38 +206,54 @@ function draw() {
     run = true;
     percy.visible = true;
     wolf.visible = true;
+    goblin.visible = true;
     wallL.visible = false; // wallsprites created for collision only
     wallR.visible = false;
     wallT.visible = false;
     potion.visible = false;
     
-   
+    goblin.changeAni('goblinWalk');
     
   }
 
 
   if(run){
     background(255)
+    // wallL.debug = true;
+    // wallR.debug = true;
     
     // image(bgTop, 0, -6800);
     // image(leftWall, 0, -leftWall.height+ windowHeight/1.5);
     // image(rightWall, windowWidth - rightWall.width, -rightWall.height  + windowHeight/1.5);
     image(bg, 0,-bg.height+windowHeight/1.5);
     // console.log(chest.length);
-    
-   
-    movement(percy,speed, win);
-    for(let i = 0; i <  3; i++){
+    if(kb.pressing(' ')){
+      attack = true;
+    }else if(!kb.pressing(' ')){
+      attack = false;
+    }
+    movement(percy,speed);
+    move(goblin);
+    move(wolf);
+    // move(wolf);
+    // backAndForth(goblin);
+    // setInterval(walkRight(goblin), 500);
+    // setInterval(walkLeft(goblin), 1500);
+    for(let i = 0; i < percy.currentHealth; i++){
       health[i].visible = true;
       health[i].y = camera.y-400;
     }
     
+    checkDemage(wolf,percy, attack);
+    checkDemage(goblin, percy, attack);
     checkInteract(percy, chest, potion);
     
-   
     
+    console.log(attack);
+    console.log(percy.currentHealth);
   }
-  console.log(percy.x, percy.y);
+  // console.log(mouseX, mouseY);
+  // console.log(percy.x, percy.y);
   // console.log(chest.x, chest.height- 100)
   
   

@@ -1,8 +1,9 @@
 // movement and camera control
 
-function movement(player,speed, window){
+function movement(player,speed){
     let attack = false;
-    let orginial_width = 120;
+    let original_width = 120;
+    let original_height = 320;
     let opened = false;
     camera.on();
     if(keyIsPressed){
@@ -52,25 +53,55 @@ function movement(player,speed, window){
               player.vel.x = 0;
             }
           }
-        else if (kb.pressing(' ') && attack == false ) {
+        else if (kb.pressing(' ') && attack == false) {
           attack = true;
-          player.changeAni('attack');
-          player.vel.x = 0;
-          player.vel.y = 0;
           if(attack){
-            player.width = orginial_width+5;
+            if(kb.pressing('right')){
+              player.vel.x = speed;
+              player.vel.y = 0;
+              player.changeAni('attack');
+              player.width = original_width+5;
+            }
+            if(kb.pressing('left')){
+              player.vel.x = -speed;
+              player.vel.y = 0;
+              player.changeAni('attack');
+              player.width = original_width+5;
+            }
+            if(kb.pressing('up')){
+              player.vel.x = 0;
+              player.vel.y = -speed;
+              player.changeAni('attack');
+              player.width = original_width +5;
+            }
+            if(kb.pressing('down')){
+              player.vel.x = 0;
+              player.vel.y = speed;
+              player.changeAni('attack');
+              player.width = original_width +5;
+            }else{
+              player.vel.x = 0;
+              player.vel.y = 0;
+              player.changeAni('attack');
+              player.width = original_width +5;
+            }
           }
       }
       }else if(!keyIsPressed){
         // player.removeColliders();
         attack = false;
-        player.width = orginial_width-60;
+        player.width = original_width/2;
+        player.height = original_height/2
         player.changeAni('idle');
         player.vel.x = 0;
         player.vel.y = 0;
+        
       }
+   
     camera.y = player.y;
+    
 }
+
 
 function checkInteract(player, chest, potion){ // add creep and boss to the attribute for interactivity later
   for(let i = 0; i < chest.length; i++){
@@ -85,7 +116,10 @@ function checkInteract(player, chest, potion){ // add creep and boss to the attr
           potion[i].visible  = true;
           for(let j = 0; j < 30; j+=5){
             potion[i].y -=j;
-            setTimeout(disappear, 300);
+            setTimeout(disappear, 200);
+            if(player.currentHealth != player.maxHealth){
+              player.currentHealth += 1;
+            }
         }
         }
       }
