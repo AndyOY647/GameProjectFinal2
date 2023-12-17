@@ -77,9 +77,9 @@ function setup() {
   
   wallL = new Sprite(leftWall.width/2, -leftWall.height/2.55, leftWall.width, leftWall.height, 'static');
   wallL.image = leftWall;
-  wallR = new Sprite( windowWidth - rightWall.width/2, -rightWall.height/2.55, rightWall.width, rightWall.height, 'static');
+  wallR = new Sprite( windowWidth - rightWall.width/2, -rightWall.height/2.3, rightWall.width, rightWall.height, 'static');
   wallR.image = rightWall;
-  wallT = new Sprite(windowWidth/2, -6870, bgTop.width, bgTop.height, 'static');
+  wallT = new Sprite(windowWidth/2, -6880, bgTop.width, bgTop.height, 'static');
   wallT.image = bgTop;
   wallB = new Sprite(windowWidth/2,windowHeight-300, windowWidth, 20, 'static');
 
@@ -144,8 +144,9 @@ function draw() {
     run = true;
     percy.visible = true;
     wolf.visible = true;
-    wallL.visible = false;
+    wallL.visible = false; // wallsprites created for collision only
     wallR.visible = false;
+    wallT.visible = false;
     potion.visible = false;
    
     
