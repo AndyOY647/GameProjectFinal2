@@ -117,10 +117,9 @@ function checkInteract(player, chest, potion){ // add creep and boss to the attr
           for(let j = 0; j < 30; j+=5){
             potion[i].y -=j;
             setTimeout(disappear, 200);
-            if(player.currentHealth != player.maxHealth){
-              player.currentHealth += 1;
-            }
-        }
+          }
+          heal(player)
+        
         }
       }
     }
@@ -135,3 +134,11 @@ function disappear(){
  
 }
 
+function heal(player){
+  if(player.currentHealth != player.maxHealth ){
+    health.length +=1;
+    player.currentHealth +=1;
+    health[health.length-1] = new Sprite(health.length*100,50, 90, 80, 'kenetic');
+    health[health.length-1].image = heart;
+  }
+}

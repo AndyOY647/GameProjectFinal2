@@ -8,12 +8,15 @@ let health = [];
 let attack = false;
 
 //enemy variables
+let wolfHealth = [];
 let wolf;
 let wolfAttackLoad, wolfWalkLoad;
 
+let goblinHealth = [];
 let goblin;
 let goblinWalkLoad, goblinAttackLoad;
 
+let bossHealth = [];
 let boss;
 let bossWalkLoad;
 
@@ -43,6 +46,12 @@ function preload(){
     'medp370_final_assets/percy_swing5.png'
    );
   
+  bossWalkLoad = loadAni(
+    "medp370_final_assets/minotaur_boss_sprites/mino_leftstep.png",
+    'medp370_final_assets/minotaur_boss_sprites/mino_rightstep.png'
+  );
+  bossWalkLoad.frameDelay = 12;
+
   wolfAttackLoad = loadAni(
     'medp370_final_assets/wolf_sprites/wolf_attack1.png',
     'medp370_final_assets/wolf_sprites/wolf_attack2.png',
@@ -108,10 +117,7 @@ function setup() {
   wallT = new Sprite(windowWidth/2, -6880, bgTop.width, bgTop.height, 'static');
   wallB = new Sprite(windowWidth/2,windowHeight-300, windowWidth, 20, 'static');
 
-  for(let i = 0; i <  3; i++){
-    health[i] = new Sprite((i+1)*100,50, 90, 80, 'kenetic');
-    health[i].image = heart;
-  }
+  
 
   for(let j  = 0; j < 3; j++){
     chest[j] = new Sprite(640, -4820, chestClosed.width, chestClosed.height, 'static');
@@ -140,7 +146,7 @@ function setup() {
 
  
   //player
-  percy = new Sprite(windowWidth/2, 500, percyWidth, percyHeight, 'dynamic');
+  percy = new Sprite(windowWidth/2, -5000, percyWidth, percyHeight, 'dynamic');
   percy.scale= 0.5;
   percy.rotationLock = true;
   percy.maxHealth = 3;
@@ -152,8 +158,13 @@ function setup() {
 
   percy.changeAni('idle');
   percy.visible = false;
-
-  //enemy
+  
+  for(let i = 0; i <  percy.maxHealth; i++){
+    health[i] = new Sprite((i+1)*100,50, 90, 80, 'kenematic');
+    health[i].image = heart;
+  }
+  
+  //wolf
   wolf = new Sprite(800, 275, 16, 30, 'static');
   wolf.scale = 4;
   wolf.addAni('wolfattack', wolfAttackLoad);
@@ -161,8 +172,14 @@ function setup() {
   wolf.visible = false;
   wolf.maxHealth = 1;
   wolf.currentHealth = wolf.maxHealth;
+  for(let i = 0; i <  wolf.maxHealth; i++){
+    wolfHealth[i] = new Sprite(wolf.x/2, wolf.y-wolf.height, heart.width, heart.height);
+    wolfHealth[i].image = heart;
+    wolfHealth[i].scale = 0.5;
+    wolfHealth[i].visible = false;
+  }
 
-  goblin = new Sprite(900, -500, 20, 26);
+  goblin = new Sprite(900, -500, 20, 26, 'static');
   goblin.scale = 4;
   goblin.addAni('goblinWalk', goblinWalkLoad);
   goblin.addAni('goblinAttack', goblinAttackLoad);
@@ -171,7 +188,28 @@ function setup() {
   goblin.bounciness = 0;
   goblin.friction = 20;
   goblin.maxHealth = 1;
-  goblin.currentHealth = goblin.maxHealth
+  goblin.currentHealth = goblin.maxHealth;
+  for(let j = 0; j <  goblin.maxHealth; j++){
+    goblinHealth[j] = new Sprite(goblin.x/2, goblin.y-goblin.height, heart.width, heart.height);
+    goblinHealth[j].image = heart;
+    goblinHealth[j].scale =0.5;
+    goblinHealth[j].visible =false;
+  }
+
+  //boss
+  boss = new Sprite(windowWidth/2,-6000, 70,80,'static');
+  boss.scale = 4;
+  boss.addAni('bossWalk', bossWalkLoad);
+  boss.visible = false;
+  boss.rotationLock = true;
+  boss.maxHealth = 5;
+  boss.currentHealth = boss.maxHealth;
+  for(let k = 0; k < boss.maxHealth; k++){
+    bossHealth[k] = new Sprite((k+1)*100, boss.y-boss.height, heart.width, heart.height);
+    bossHealth[k].image = heart;
+    bossHealth[k].scale = 0.5;
+    bossHealth[k].visible = false;
+  }
   //health
   for(let i = 0; i <  percy.maxHealth; i++){
     health[i].visible = false;
@@ -194,6 +232,7 @@ function draw() {
   percy.debug = true;
   wolf.debug = true;
   goblin.debug = true;
+  boss.debug = true;
   percy.pixelPerfect = true;
  
   // wallT.debug = false;
@@ -211,7 +250,7 @@ function draw() {
     wallR.visible = false;
     wallT.visible = false;
     potion.visible = false;
-    
+    boss.visible = true;
     goblin.changeAni('goblinWalk');
     
   }
@@ -235,6 +274,7 @@ function draw() {
     movement(percy,speed);
     move(goblin);
     move(wolf);
+    move(boss);
     // move(wolf);
     // backAndForth(goblin);
     // setInterval(walkRight(goblin), 500);
@@ -243,13 +283,32 @@ function draw() {
       health[i].visible = true;
       health[i].y = camera.y-400;
     }
-    
+    for(let i = 0; i <  wolf.maxHealth; i++){
+      wolfHealth[i].collider = 'k';
+      wolfHealth[i].visible = true;
+      wolfHealth[i].x = wolf.x;
+      wolfHealth[i].y = wolf.y-80;
+    }
+    for(let j = 0; j <  goblin.maxHealth; j++){
+      goblinHealth[j].collider = 'k';
+      goblinHealth[j].visible = true;
+      goblinHealth[j].x = goblin.x;
+      goblinHealth[j].y = goblin.y-80;
+    }
+
+    for(let k = 0; k < boss.maxHealth; k++){
+      bossHealth[k].collider = 'k';
+      bossHealth[k].visible = true;
+      bossHealth[k].x = boss.x;
+      bossHealth[k].y = boss.y - 200;
+    }
+    checkDemage(boss, percy, attack);
     checkDemage(wolf,percy, attack);
     checkDemage(goblin, percy, attack);
     checkInteract(percy, chest, potion);
     
     
-    console.log(attack);
+    
     console.log(percy.currentHealth);
   }
   // console.log(mouseX, mouseY);
