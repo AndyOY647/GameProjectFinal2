@@ -17,18 +17,28 @@ function move(enemy){
 
 
 function checkDemage(enemy, player, attack){
-    if(enemy.collided(player) && attack){
-      enemy.currentHealth -= 1;
+    if(enemy.collides(player) && attack){
       if(enemy == wolf){
         wolfHealth[wolfHealth.length-1].remove();
         wolfHealth.length-1;
         wolf.remove();
       }
       if(enemy == goblin){
-        goblinHealth[wolfHealth.length-1].remove();
+        goblinHealth[goblinHealth.length-1].remove();
         goblinHealth.length-1;
         goblin.remove();
       }
+      if(enemy == boss && attack){
+        if(bossHealth.length >0){
+        boss.currentHealth-=1;
+        bossHealth[bossHealth.length-1].remove();
+        bossHealth.length-=1;
+        }
+        if(bossHealth.length == 0 || !run){
+          boss.remove();
+        }
+      }
+
         }else if(enemy.collided(player) && !attack){
           if(health.length >=1){
             player.currentHealth -= 1;
@@ -38,6 +48,7 @@ function checkDemage(enemy, player, attack){
               }
             if(health.length <= 0){
               player.currentHealth = 0;
+              run = false;
         }
     }
 

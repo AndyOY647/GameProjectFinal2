@@ -55,38 +55,42 @@ function movement(player,speed){
           }
         else if (kb.pressing(' ') && attack == false) {
           attack = true;
+          if(kb.pressing('right') && kb.pressing(' ')){
+            player.changeAni('attack');
+            player.vel.x = speed;
+            player.vel.y = 0;
+          }else if(!kb.pressing('right')){
+            player.vel.x = 0;
+          }
+          if(kb.pressing('left') && kb.pressing(' ')){
+            player.changeAni('attack');
+            player.vel.x = -speed;
+            player.vel.y = 0;
+          }else if(!kb.pressing('left')){
+            player.vel.x = 0;
+          }
+          if(kb.pressing('up')  && kb.pressing(' ')){
+            player.changeAni('attack');
+            player.vel.x = 0;
+            player.vel.y = -speed;
+          }else if(!kb.pressing('up')){
+            player.vel.y = 0;
+          }
+          if(kb.pressing('down')  && kb.pressing(' ')){
+            player.changeAni('attack');
+            player.vel.x = 0;
+            player.vel.y = speed;
+          }else if(!kb.pressing('down')){
+            player.vel.y = 0;
+          }
           if(attack){
-            if(kb.pressing('right')){
-              player.vel.x = speed;
-              player.vel.y = 0;
-              player.changeAni('attack');
-              player.width = original_width+5;
-            }
-            if(kb.pressing('left')){
-              player.vel.x = -speed;
-              player.vel.y = 0;
-              player.changeAni('attack');
-              player.width = original_width+5;
-            }
-            if(kb.pressing('up')){
-              player.vel.x = 0;
-              player.vel.y = -speed;
-              player.changeAni('attack');
-              player.width = original_width +5;
-            }
-            if(kb.pressing('down')){
-              player.vel.x = 0;
-              player.vel.y = speed;
               player.changeAni('attack');
               player.width = original_width +5;
             }else{
               player.vel.x = 0;
               player.vel.y = 0;
-              player.changeAni('attack');
-              player.width = original_width +5;
             }
           }
-      }
       }else if(!keyIsPressed){
         // player.removeColliders();
         attack = false;
