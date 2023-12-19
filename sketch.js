@@ -101,6 +101,11 @@ function preload(){
   potionImage = loadImage('medp370_final_assets/potion_item.png');
   gameOverScreen = loadImage('final_gameover.png');
 
+   // music
+   gamePlayMusic = loadSound('gameplay_music.mp3');
+   titleScreenMusic = loadSound('titlescreen_music.mp3');
+   swordSwing = loadSound('sword.mp3');
+
 
 
 } // preload end
@@ -110,6 +115,7 @@ let run = false;
 let gameOver = false;
 let win;
 let counter = 0;
+
 function setup() {
   //Before main loop
   win = new Canvas(windowWidth, windowHeight);
@@ -119,6 +125,12 @@ function setup() {
   wallT = new Sprite(windowWidth/2, -6880, bgTop.width, bgTop.height, 'static');
   wallB = new Sprite(windowWidth/2,windowHeight-300, windowWidth, 20, 'static');
 
+  titleScreenMusic.play();
+  titleScreenMusic.loop();
+  titleScreenMusic.setVolume(0.05);
+  userStartAudio();
+
+  
   
 
   for(let j  = 0; j < 3; j++){
@@ -243,16 +255,20 @@ function draw() {
   // chest.debug = true;
   // chestRadius.debug = false;
   
-  
+ 
   image(startScreen, 0, 0, win.width, win.height);
   if(kb.presses('enter')){
     run = true;
+    titleScreenMusic.stop();
+    inGameMusic(run);
   }
+  
 
   mainGameLoop();
 
   if(!run && percy.currentHealth == 0){
     background(gameOverScreen);
+    gamePlayMusic.stop();
     percy.visible = false;
     wolf.visible = false;
     goblin.visible = false;
@@ -344,6 +360,7 @@ function draw() {
       //runs mainloop again
       run = true
       mainGameLoop();
+      inGameMusic(run);
     }
   }
  
@@ -360,6 +377,7 @@ function draw() {
 
 function mainGameLoop(){
   if(run){
+    
     percy.visible = true;
     wolf.visible = true;
     goblin.visible = true;
@@ -380,8 +398,10 @@ function mainGameLoop(){
     // console.log(chest.length);
     if(kb.pressing(' ')){
       attack = true;
+      swingSword(attack);
     }else if(!kb.pressing(' ')){
       attack = false;
+      swingSword(attack);
     }
     movement(percy,speed);
     move(goblin);
@@ -437,5 +457,22 @@ function mainGameLoop(){
   //  console.log(boss.currentHealth);
   //  console.log(percy.currentHealth);
    console.log(run);
+  }
+}
+
+function inGameMusic(run){
+  if(run){
+    gamePlayMusic.play();
+    gamePlayMusic.setVolume(0.1);
+    gamePlayMusic.loop();
+  }
+}
+
+function swingSword(attack){
+  if(attack){
+    swordSwing.play();
+    swordSwing.setVolume(0.05);
+  }else if(!attack){
+    swordSwing.stop();
   }
 }
